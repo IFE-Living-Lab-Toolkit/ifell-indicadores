@@ -49,22 +49,20 @@ def load_dataset(data):
 
 def load_model(Indicator):
         if (Indicator == "Alertness"):
-                rf = joblib.load('C:/Users/ifeex/OneDrive/Documentos/Modelos Predictivos/Modelos Predictivos/Modulos/' + Indicator + '/RF91-EEG-' + Indicator + '.joblib')
+                rf = joblib.load('C:/Users/SRV-ife.livinglab/Documents/Modelos Predictivos/Repo_Modelos/ifell-indicadores/Modulos/' + Indicator + '/RF91-EEG-' + Indicator + '.joblib')
                 return rf
         elif (Indicator == "Concentration"):
-                rf = joblib.load('C:/Users/ifeex/OneDrive/Documentos/Modelos Predictivos/Modelos Predictivos/Modulos/' + Indicator + '/RF99-EEG-' + Indicator + '.joblib')
+                rf = joblib.load('C:/Users/SRV-ife.livinglab/Documents/Modelos Predictivos/Repo_Modelos/ifell-indicadores/Modulos/' + Indicator + '/RF99-EEG-' + Indicator + '.joblib')
                 return rf
         elif (Indicator == "Fatigue"):
-               rf = joblib.load('C:/Users/ifeex/OneDrive/Documentos/Modelos Predictivos/Modelos Predictivos/Modulos/' + Indicator + '/RF99-EEG-' + Indicator + '.joblib')
+               rf = joblib.load('C:/Users/SRV-ife.livinglab/Documents/Modelos Predictivos/Repo_Modelos/ifell-indicadores/Modulos/' + Indicator + '/RF99-EEG-' + Indicator + '.joblib')
                return rf
         elif (Indicator == "Motivation"):
-               rf = joblib.load('C:/Users/ifeex/OneDrive/Documentos/Modelos Predictivos/Modelos Predictivos/Modulos/' + Indicator + '/RF99-EEG-' + Indicator + '.joblib')
+               rf = joblib.load('C:/Users/SRV-ife.livinglab/Documents/Modelos Predictivos/Repo_Modelos/ifell-indicadores/Modulos/' + Indicator + '/RF99-EEG-' + Indicator + '.joblib')
                return rf
         elif (Indicator == "Stress"):
-               rf = joblib.load('C:/Users/ifeex/OneDrive/Documentos/Modelos Predictivos/Modelos Predictivos/Modulos/' + Indicator + '/RF99-EEG-' + Indicator + '.joblib')
+               rf = joblib.load('C:/Users/SRV-ife.livinglab/Documents/Modelos Predictivos/Repo_Modelos/ifell-indicadores/Modulos/' + Indicator + '/RF99-EEG-' + Indicator + '.joblib')
                return rf
-        else : 
-               print("Hola")
 
 def prediction(rf, dataset, Indicator):
     X = dataset[['Alpha_TP9','Alpha_AF7','Alpha_AF8','Alpha_TP10','Beta_TP9','Beta_AF7','Beta_AF8',
@@ -87,25 +85,25 @@ def graphs(Gamificacion, TemaConceptual, Practica, Indicator):
     def pie_chart(data, title):
         count_values = data[Indicator].value_counts()
         fig, ax = plt.subplots(figsize=(5, 5))  
-        explode = (0.1, 0)  
+
         colors = sns.color_palette("pastel")[0:2]
 
         if len(count_values) == 2:
             values = [count_values.get(1, 0), count_values.get(0, 0)]
-            labels = [f"High {Indicator}", f"Low {Indicator}"]
+
             explode = (0.05, 0.05)
         elif count_values.index[0] == 1:
             values = [count_values[1]]
-            labels = [f"High {Indicator}"]
+
             explode = (0.1,)
         else:
             values = [count_values[0]]
-            labels = [f"Low {Indicator}"]
+
             explode = (0.1,)
 
         wedges, texts, autotexts = ax.pie(
             values,
-            labels=labels,
+
             explode=explode,
             autopct='%1.1f%%',
             startangle=180,
@@ -122,11 +120,19 @@ def graphs(Gamificacion, TemaConceptual, Practica, Indicator):
         ax.axis('equal')  # Círculo perfecto
         ax.set_title(title, fontsize=13, fontweight='bold')
         st.pyplot(fig)
-
+    c1,c2,c3 = st.columns(3)
     # Generar las gráficas
-    pie_chart(Gamificacion, f'Gamification - {Indicator}')
-    pie_chart(TemaConceptual, f'Conceptual Topic - {Indicator}')
-    pie_chart(Practica, f'Practice - {Indicator}')
+    with c1:
+
+        pie_chart(Gamificacion)
+    with c2:
+
+        pie_chart(TemaConceptual)
+    with c3:
+
+        pie_chart(Practica)
+
+    c1,c2,c3 = st.columns(3)
 
 
 st.write("Upload your raw EEG CSV file from Mind Monitor (files can be very large, please be patient)")
