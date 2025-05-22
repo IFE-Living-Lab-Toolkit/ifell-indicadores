@@ -23,11 +23,44 @@ from io import StringIO
 
 st.title("Mi primera app con Streamlit")
 
+def starting():
+        Indicator = st.radio(
+            "What's your favorite movie genre",
+            [":rainbow[Alertness]", "***Concentration***", "Fatigue :movie_camera:", "***Motivation***", "Stress :movie_camera:"],
+            )
+
+        if Indicator == ":rainbow[Alertness]":
+                Indicator = "Alertness"
+                rf = load_model(Indicator)
+                LineaBase, Gamificacion, TemaConceptual, Practica = prediction(rf, dataset, Indicator)
+                graphs(Gamificacion, TemaConceptual, Practica, Indicator)
+
+        elif Indicator == "***Concentration***":
+                Indicator = "Concentration"
+                rf = load_model(Indicator)
+                LineaBase, Gamificacion, TemaConceptual, Practica = prediction(rf, dataset, Indicator)
+                graphs(Gamificacion, TemaConceptual, Practica, Indicator)
+
+        elif Indicator == "Fatigue :movie_camera:":
+                Indicator = "Fatigue"
+                rf = load_model(Indicator)
+                LineaBase, Gamificacion, TemaConceptual, Practica = prediction(rf, dataset, Indicator)
+                graphs(Gamificacion, TemaConceptual, Practica, Indicator)
+
+        elif Indicator == "***Motivation***":
+                Indicator = "Motivation"
+                rf = load_model(Indicator)
+                LineaBase, Gamificacion, TemaConceptual, Practica = prediction(rf, dataset, Indicator)
+                graphs(Gamificacion, TemaConceptual, Practica, Indicator)
+
+        elif Indicator == "Stress :movie_camera:":
+                Indicator = "Stress"
+                rf = load_model(Indicator)
+                LineaBase, Gamificacion, TemaConceptual, Practica = prediction(rf, dataset, Indicator)
+                graphs(Gamificacion, TemaConceptual, Practica, Indicator)
+        
 def load_dataset(data):
     #dataset = pd.read_csv("C:/Users/ifeex/OneDrive/Documentos/Modelos Predictivos/Modelos Predictivos/Predicción/[FINAL]EEG_Dataset.csv", header=0)
-    dataset = pd.read_csv(data)
-    dataset.replace([np.inf, -np.inf], np.nan, inplace=True)
-    dataset = dataset.dropna()
 
     dataset['RazonTP9(B/T)'] = np.where(dataset['Theta_TP9'] != 0, dataset['Beta_TP9'] / dataset['Theta_TP9'], 0)
     dataset['RazonAF7(B/T)'] = np.where(dataset['Theta_AF7'] != 0, dataset['Beta_AF7'] / dataset['Theta_AF7'], 0)
@@ -43,7 +76,6 @@ def load_dataset(data):
 
     dataset = dataset.dropna()
 
-    dataset['TimeStamp'] = pd.to_datetime(dataset['TimeStamp'])
 
     return dataset
 
@@ -80,6 +112,8 @@ def prediction(rf, dataset, Indicator):
     Practica = dataset.loc[(dataset['TimeStamp'] >= "2025-03-11 11:53") & (dataset['TimeStamp'] <="2025-03-11 12:33:59")]
 
     return LineaBase, Gamificacion, TemaConceptual, Practica
+
+
 def graphs(Gamificacion, TemaConceptual, Practica, Indicator):
     def pie_chart(data, title):
         count_values = data[Indicator].value_counts()
@@ -150,42 +184,21 @@ if uploaded_file is not None:
                        "FileType": uploaded_file.type, 
                        "FileSize": f"{uploaded_file.size / (1024 * 1024):.2f} MB"}
         st.write(file_details)
-        
-        dataset = load_dataset(uploaded_file)
-        Indicator = st.radio(
-        "What's your favorite movie genre",
-        [":rainbow[Alertness]", "***Concentration***", "Fatigue :movie_camera:", "***Motivation***", "Stress :movie_camera:"],
-        )
 
-        if Indicator == ":rainbow[Alertness]":
-                Indicator = "Alertness"
-                rf = load_model(Indicator)
-                LineaBase, Gamificacion, TemaConceptual, Practica = prediction(rf, dataset, Indicator)
-                graphs(Gamificacion, TemaConceptual, Practica, Indicator)
+        dataset = pd.read_csv(uploaded_file)
+        dataset.replace([np.inf, -np.inf], np.nan, inplace=True)
+        dataset = dataset.dropna()
+        dataset['TimeStamp'] = pd.to_datetime(dataset['TimeStamp'])
 
-        elif Indicator == "***Concentration***":
-                Indicator = "Concentration"
-                rf = load_model(Indicator)
-                LineaBase, Gamificacion, TemaConceptual, Practica = prediction(rf, dataset, Indicator)
-                graphs(Gamificacion, TemaConceptual, Practica, Indicator)
+        if ((len(dataset.columns) == 7) & (dataset.columns[6].lower() == "temperature")):
+            opcion = 1
+            dataset = load_dataset(uploaded_file)
 
-        elif Indicator == "Fatigue :movie_camera:":
-                Indicator = "Fatigue"
-                rf = load_model(Indicator)
-                LineaBase, Gamificacion, TemaConceptual, Practica = prediction(rf, dataset, Indicator)
-                graphs(Gamificacion, TemaConceptual, Practica, Indicator)
-
-        elif Indicator == "***Motivation***":
-                Indicator = "Motivation"
-                rf = load_model(Indicator)
-                LineaBase, Gamificacion, TemaConceptual, Practica = prediction(rf, dataset, Indicator)
-                graphs(Gamificacion, TemaConceptual, Practica, Indicator)
-
-        elif Indicator == "Stress :movie_camera:":
-                Indicator = "Stress"
-                rf = load_model(Indicator)
-                LineaBase, Gamificacion, TemaConceptual, Practica = prediction(rf, dataset, Indicator)
-                graphs(Gamificacion, TemaConceptual, Practica, Indicator)
-        
+        elif (len(dataset.columns) == 28 & dataset.columns[4] == 'Delta_TP9'):
+            opcion = 2
+            dataset = load_dataset_embrace(uploaded_file)
+        else:
+            st.write("No es lo buscado, intentelo de nuevo")
+       
 
 
